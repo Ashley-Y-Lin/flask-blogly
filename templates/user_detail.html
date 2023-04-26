@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %} {{user.first_name}} {% endblock %}
+{% block title %}{% endblock %}
 
 {% block content %}
 
+<!-- TODO: handle no image -->
 <img src="{{user.image_url}}" alt="The user's profile image!">
 
 <h1>

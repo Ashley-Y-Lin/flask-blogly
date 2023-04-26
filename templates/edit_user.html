@@ -12,6 +12,7 @@
       id="first_name_input"
       class="form-control"
       placeholder="Enter a first name"
+      value="{{user.first_name}}"
       type="text"
       required>
   </div>
@@ -22,6 +23,7 @@
       id="last_name_input"
       class="form-control"
       placeholder="Enter a last name"
+      value="{{user.last_name}}"
       type="text"
       required>
   </div>
@@ -32,14 +34,15 @@
       id="image_url_input"
       class="form-control"
       placeholder="Provide an image of this user"
+      value="{{user.image_url}}"
       type="text">
   </div>
 
-  <form action="/users/{{user.id}}" method="GET">
-    <button class="btn btn-outline-info">Cancel</button>
-  </form>
-
   <button class="btn btn-success">Save</button>
+</form>
+
+<form action="/users/{{user.id}}" method="GET">
+  <button class="btn btn-outline-info">Cancel</button>
 </form>
 
 {% endblock %}
