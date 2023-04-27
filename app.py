@@ -3,7 +3,7 @@
 import os
 
 from flask import Flask, redirect, render_template, request, flash
-from models import db, connect_db, User
+from models import db, connect_db, User, DEFAULT_IMAGE_URL
 
 app = Flask(__name__)
 
@@ -48,16 +48,17 @@ def add_new_user():
     """adds a new user with the details in the request body
     before redirecting to /users if the request was successful"""
 
-    first_name = request.form.get("first_name")
-    last_name = request.form.get("last_name")
+    first_name = request.form["first_name"]
+    last_name = request.form["last_name"]
 
-    # TODO: default profile image
-    image_url = request.form.get("image_url") or None
+    image_url = request.form["image_url"] or None
 
     user = User(first_name=first_name, last_name=last_name, image_url=image_url)
 
     db.session.add(user)
     db.session.commit()
+
+    flash(f"User '{user.first_name} {user.last_name}' was added.")
 
     return redirect("/users")
 
@@ -87,11 +88,10 @@ def edit_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    user.first_name = request.form.get("first_name")
-    user.last_name = request.form.get("last_name")
+    user.first_name = request.form["first_name"]
+    user.last_name = request.form["last_name"]
 
-    # TODO: default profile image
-    user.image_url = request.form.get("image_url", "")
+    user.image_url = request.form["image_url"] or DEFAULT_IMAGE_URL
 
     db.session.add(user)
     db.session.commit()

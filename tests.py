@@ -5,7 +5,7 @@ os.environ["DATABASE_URL"] = "postgresql:///blogly_test"
 from unittest import TestCase
 
 from app import app, db
-from models import User
+from models import User, DEFAULT_IMAGE_URL
 
 # Make Flask errors be real errors, rather than HTML pages with error info
 app.config["TESTING"] = True
@@ -105,6 +105,7 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
             self.assertIn(f"Ashley Lin", html)
+            self.assertIn("was added", html)
 
     def test_valid_display_user_info(self):
         """Test that the user detail page is correctly displayed depending on the
@@ -114,12 +115,13 @@ class UserViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             html = resp.get_data(as_text=True)
             self.assertIn(f"<!-- this is the {self.user_id} user_detail page -->", html)
+            self.assertIn(DEFAULT_IMAGE_URL, html)
 
     def test_invalid_display_user_info(self):
         """Test that when an invalid user id is submitted to the user detail page,
         it redirects to a 404 error."""
         with self.client as c:
-            resp = c.get(f"/users/2023")
+            resp = c.get(f"/users/0")
             self.assertEqual(resp.status_code, 404)
 
     def test_display_edit_user_form(self):
