@@ -105,9 +105,12 @@ def delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
+    # post.query.filter_by(author_id = user.id).delete
     for post in user.posts:
         db.session.delete(post)
 
+    # usually people don't delete -- just make things null.
+    # storing data is cheap
     db.session.delete(user)
     db.session.commit()
 

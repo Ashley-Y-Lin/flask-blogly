@@ -133,6 +133,7 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertIn(f"<!-- this is the {self.user_id} edit user page -->", html)
 
+    # TODO: make another class for posts tests
     def test_delete_user_no_posts(self):
         """Test deleting a user who doesn't have any posts.
         Make sure it redirects to the user list page."""
@@ -156,9 +157,12 @@ class UserViewTestCase(TestCase):
 
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
+            # TODO: use the COUNT aggregate function
             self.assertEqual(User.query.all(), [])
             self.assertIn("was deleted.", html)
 
+    # writing redirect tests doesn't seem that useful, mostly care that the
+    # redirection works and user sees correct html
     def test_delete_user_with_posts(self):
         """Test deleting a user who has some posts.
         Make sure it redirects to the user list page."""
@@ -202,5 +206,6 @@ class UserViewTestCase(TestCase):
 
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
+            # use COUNT here
             self.assertEqual(User.query.all(), [])
             self.assertIn("was deleted.", html)

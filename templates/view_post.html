@@ -7,7 +7,7 @@
 <div>{{post.content}}</div>
 
 <div><em>By {{post.author.first_name}} {{post.author.last_name}} </em></div>
-
+<!--TODO: make links-->
 <form action="/users/{{post.author_id}}" method="GET">
   <button class="btn btn-outline-primary">See all posts</button>
 </form>
