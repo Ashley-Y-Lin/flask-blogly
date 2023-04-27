@@ -3,7 +3,7 @@
 import os
 
 from flask import Flask, redirect, render_template, request, flash
-from models import db, connect_db, User, Post, DEFAULT_IMAGE_URL
+from models import db, connect_db, User, Post, Tag, PostTag, DEFAULT_IMAGE_URL
 
 app = Flask(__name__)
 
@@ -105,12 +105,8 @@ def delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    # post.query.filter_by(author_id = user.id).delete
-    for post in user.posts:
-        db.session.delete(post)
+    Post.query.filter(Post.author_id == user.id).delete()
 
-    # usually people don't delete -- just make things null.
-    # storing data is cheap
     db.session.delete(user)
     db.session.commit()
 
@@ -196,3 +192,85 @@ def delete_post(post_id):
     flash("Post deleted!")
 
     return redirect(f"/users/{post.author_id}")
+
+
+@app.get("/tags")
+def display_all_tags():
+    """displays all existing tags"""
+
+    tags = Tag.query.all()
+
+    return render_template("view_tags.html", tags=tags)
+
+
+@app.get("/tags/<int:tag_id>")
+def display_tag_info(tag_id):
+    """returns the tag info page for a given tag by id"""
+
+    tag = Tag.query.get_or_404(tag_id)
+
+    return render_template("tag_detail.html", tag=tag)
+
+
+@app.get("/tags/new")
+def display_add_tag_form():
+    """displays the form to add a new tag"""
+
+    return render_template("new_tag.html")
+
+
+@app.post("/tags/new")
+def add_new_tag():
+    """adds a new tag and redirects to the tag list page"""
+
+    name = request.form["tag_name"]
+
+    tag = Tag(name=name)
+    db.session.add(tag)
+    db.session.commit()
+
+    flash("Tag added!")
+
+    return redirect(f"/tags")
+
+
+@app.get("/tags/<int:tag_id>/edit")
+def display_edit_tag_form(tag_id):
+    """displays a form to edit a tag given its id"""
+
+    tag = Tag.query.get_or_404(tag_id)
+
+    return render_template("edit_tag.html", tag=tag)
+
+
+@app.post("/tags/<int:tag_id>/edit")
+def edit_tag(tag_id):
+    """updates the tag with the given id
+    and redirects to the tag list page"""
+
+    tag = Tag.query.get_or_404(tag_id)
+
+    tag.name = request.form["tag_name"]
+
+    db.session.add(tag)
+    db.session.commit()
+
+    flash("Tag updated!")
+
+    return redirect(f"/tags")
+
+
+@app.post("/tags/<int:tag_id>/delete")
+def delete_tag(tag_id):
+    """deletes a tag by id"""
+
+    tag = Tag.query.get_or_404(tag_id)
+
+    PostTag.query.filter(PostTag.tag_id == tag.id).delete()
+
+    db.session.delete(tag)
+    db.session.commit()
+
+    flash(f"The tag '{tag.name}' was deleted.")
+
+    return redirect("/tags")

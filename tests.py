@@ -157,8 +157,7 @@ class UserViewTestCase(TestCase):
 
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            # TODO: use the COUNT aggregate function
-            self.assertEqual(User.query.all(), [])
+            self.assertEqual(User.query.count(), 0)
             self.assertIn("was deleted.", html)
 
     # writing redirect tests doesn't seem that useful, mostly care that the
@@ -206,6 +205,5 @@ class UserViewTestCase(TestCase):
 
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            # use COUNT here
-            self.assertEqual(User.query.all(), [])
+            self.assertEqual(User.query.count(), 0)
             self.assertIn("was deleted.", html)

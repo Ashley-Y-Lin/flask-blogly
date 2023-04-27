@@ -7,17 +7,13 @@
 <div>{{post.content}}</div>
 
 <div><em>By {{post.author.first_name}} {{post.author.last_name}} </em></div>
-<!--TODO: make links-->
-<form action="/users/{{post.author_id}}" method="GET">
-  <button class="btn btn-outline-primary">See all posts</button>
-</form>
 
-<form action="/posts/{{post.id}}/edit" method="GET">
-  <button class="btn btn-primary">Edit</button>
-</form>
+<a href="/users/{{post.author_id}}" class="btn btn-outline-primary">See all posts</a>
+
+<a href="/posts/{{post.id}}/edit" class="btn btn-primary">Edit</a>
 
 <form action="/posts/{{post.id}}/delete" method="POST">
-  <button class="btn btn-danger">Delete</button>
+  <button class="btn btn-danger">Delete</a>
 </form>
 
 <!-- this is the view post page for {{post.id}} -->

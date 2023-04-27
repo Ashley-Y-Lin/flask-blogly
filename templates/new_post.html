@@ -29,8 +29,6 @@
   <button class="btn btn-success">Add</button>
 </form>
 
-<form action="/users/{{user.id}}" method="GET">
-  <button class="btn btn-info">Cancel</button>
-</form>
+<a href="/users/{{user.id}}" class="btn btn-info">Cancel</button>
 
 {% endblock %}

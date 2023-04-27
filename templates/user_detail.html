@@ -26,10 +26,7 @@
   {% endfor %}
 </ul>
 
-<!--TODO: forms with a method of GET that's not connecting input should just be a link -->
-<form action="/users/{{user.id}}/posts/new" method="GET">
-  <button class="btn btn-primary">Add Post</button>
-</form>
+<a href="/users/{{user.id}}/posts/new" class="btn btn-primary">Add Post</button>
 
 <!-- this is the {{user.id}} user_detail page -->
 
