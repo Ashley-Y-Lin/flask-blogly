@@ -3,7 +3,7 @@
 import os
 
 from flask import Flask, redirect, render_template, request, flash
-from models import db, connect_db, User, DEFAULT_IMAGE_URL
+from models import db, connect_db, User, Post, DEFAULT_IMAGE_URL
 
 app = Flask(__name__)
 
@@ -111,3 +111,82 @@ def delete_user(user_id):
     flash(f"User '{user.first_name} {user.last_name}' was deleted.")
 
     return redirect("/users")
+
+
+@app.get("/users/<int:user_id>/posts/new")
+def display_add_post_form(user_id):
+    """displays the form to add a new post authored by a given user"""
+
+    user = User.query.get_or_404(user_id)
+
+    return render_template("new_post.html", user)
+
+
+@app.post("/users/<int:user_id>/posts/new")
+def add_new_post(user_id):
+    """adds a new post authored by a given user
+    and redirects to their user detail page"""
+
+    user = User.query.get_or_404(user_id)
+
+    title = request.form["title"]
+    content = request.form["content"]
+
+    post = Post(title=title, content=content, author_id=user.id)
+    db.session.add(post)
+    db.session.commit()
+
+    flash("Post added!")
+
+    return redirect(f"/users/{user.id}")
+
+
+@app.get("/posts/<int:post_id>")
+def display_post(post_id):
+    """displays a post given its id"""
+
+    post = Post.query.get_or_404(post_id)
+
+    return render_template("view_post.html", post)
+
+
+@app.get("/posts/<int:post_id>/edit")
+def display_edit_post_form(post_id):
+    """displays a form to edit a post given its id"""
+
+    post = Post.query.get_or_404(post_id)
+
+    return render_template("edit_post.html", post)
+
+
+@app.post("/posts/<int:post_id>/edit")
+def edit_post(post_id):
+    """updates the post with the given id
+    and redirects to the view post page"""
+
+    post = Post.query.get_or_404(post_id)
+
+    post.title = request.form["title"]
+    post.content = request.form["content"]
+
+    db.session.add(post)
+    db.session.commit()
+
+    flash("Post updated!")
+
+    return redirect(f"/posts/{post.id}")
+
+
+@app.post("/posts/<int:post_id>/delete")
+def delete_post(post_id):
+    """deletes the post with id post_id
+    and redirects to the poster's user detail page"""
+
+    post = Post.query.get_or_404(post_id)
+
+    db.session.delete(post)
+    db.session.commit()
+
+    flash("Post deleted!")
+
+    return redirect(f"/users/{post.author_id}")

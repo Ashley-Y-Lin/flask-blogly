@@ -32,3 +32,23 @@ class User(db.Model):
         nullable=False,
         default=DEFAULT_IMAGE_URL,
     )
+
+
+class Post(db.Model):
+    """Post."""
+
+    __tablename__ = "posts"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    title = db.Column(db.String(100), nullable=False)
+
+    content = db.Column(db.Text, nullable=False)
+
+    # TODO: does this work?
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=db.func.now())
+
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    author = db.relationship('User', backref = 'posts')
