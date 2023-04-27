@@ -5,13 +5,13 @@ os.environ["DATABASE_URL"] = "postgresql:///blogly_test"
 from unittest import TestCase
 
 from app import app, db
-from models import DEFAULT_IMAGE_URL, User
+from models import User
 
 # Make Flask errors be real errors, rather than HTML pages with error info
-app.config['TESTING'] = True
+app.config["TESTING"] = True
 
 # This is a bit of hack, but don't use Flask DebugToolbar
-app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
+app.config["DEBUG_TB_HOSTS"] = ["dont-show-debug-toolbar"]
 
 # Create our tables (we do this here, so we only create the tables
 # once for all tests --- in each test, we'll delete the data
@@ -53,10 +53,80 @@ class UserViewTestCase(TestCase):
         """Clean up any fouled transaction."""
         db.session.rollback()
 
-    def test_list_users(self):
+    def test_display_users_list(self):
+        """Test HTML for /users is displayed, and includes the name
+        of a user in the database."""
         with self.client as c:
             resp = c.get("/users")
             self.assertEqual(resp.status_code, 200)
             html = resp.get_data(as_text=True)
             self.assertIn("test1_first", html)
             self.assertIn("test1_last", html)
+
+    def test_display_new_user_form(self):
+        """Test correct HTML is displayed for the form to add a user,
+        and that the HTTP status code is 200."""
+        with self.client as c:
+            resp = c.get("/users/new")
+            self.assertEqual(resp.status_code, 200)
+            html = resp.get_data(as_text=True)
+            self.assertIn('<form id="submit-new-user"', html)
+
+    def test_add_new_user(self):
+        """Test adding a new user. Make sure it redirects to /users."""
+        with self.client as c:
+            resp = c.post(
+                "/users/new",
+                data={
+                    "first_name": "Ashley",
+                    "last_name": "Lin",
+                    "image_url": "",
+                },
+                follow_redirects=False,
+            )
+
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(resp.location, "/users")
+
+    def test_add_new_user_redirection(self):
+        """Test that after adding a new user, it successfully displays the
+        newly added user on the screen."""
+        with self.client as c:
+            resp = c.post(
+                "/users/new",
+                data={
+                    "first_name": "Ashley",
+                    "last_name": "Lin",
+                    "image_url": "",
+                },
+                follow_redirects=True,
+            )
+
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(f"Ashley Lin", html)
+
+    def test_valid_display_user_info(self):
+        """Test that the user detail page is correctly displayed depending on the
+        user id, when a valid user id is submitted."""
+        with self.client as c:
+            resp = c.get(f"/users/{self.user_id}")
+            self.assertEqual(resp.status_code, 200)
+            html = resp.get_data(as_text=True)
+            self.assertIn(f"<!-- this is the {self.user_id} user_detail page -->", html)
+
+    def test_invalid_display_user_info(self):
+        """Test that when an invalid user id is submitted to the user detail page,
+        it redirects to a 404 error."""
+        with self.client as c:
+            resp = c.get(f"/users/2023")
+            self.assertEqual(resp.status_code, 404)
+
+    def test_display_edit_user_form(self):
+        """Test that the page for a user with a valid user id to edit their
+        profile is displayed."""
+        with self.client as c:
+            resp = c.get(f"/users/{self.user_id}/edit")
+            self.assertEqual(resp.status_code, 200)
+            html = resp.get_data(as_text=True)
+            self.assertIn(f"<!-- this is the {self.user_id} edit user page -->", html)

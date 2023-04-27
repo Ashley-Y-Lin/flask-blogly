@@ -52,10 +52,9 @@ def add_new_user():
     last_name = request.form.get("last_name")
 
     # TODO: default profile image
-    image_url = request.form.get("image_url", "")
+    image_url = request.form.get("image_url") or None
 
-    user = User(first_name=first_name,
-                last_name=last_name, image_url=image_url)
+    user = User(first_name=first_name, last_name=last_name, image_url=image_url)
 
     db.session.add(user)
     db.session.commit()
@@ -98,6 +97,7 @@ def edit_user(user_id):
     db.session.commit()
 
     return redirect(f"/users")
+
 
 @app.post("/users/<int:user_id>/delete")
 def delete_user(user_id):
