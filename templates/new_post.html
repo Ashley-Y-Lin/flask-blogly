@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %} Add Post for {{user.first_name}} {{user.last_name}} {% endblock %}
+
+{% block content %}
+
+<form id="add-new-post" action="/users/{{user.id}}/posts/new" method="POST">
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input
+      name="title"
+      id="title_input"
+      class="form-control"
+      placeholder="Enter a post title"
+      type="text"
+      required>
+  </div>
+  <div class="form-group">
+    <label for="content">Post Content</label>
+    <input
+      name="content"
+      id="content_input"
+      class="form-control"
+      placeholder="Enter post content"
+      type="text"
+      required>
+  </div>
+
+  <button class="btn btn-success">Add</button>
+</form>
+
+<form action="/users/{{user.id}}" method="GET">
+  <button class="btn btn-info">Cancel</button>
+</form>
+
+{% endblock %}

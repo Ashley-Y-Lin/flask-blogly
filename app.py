@@ -105,6 +105,9 @@ def delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
+    for post in user.posts:
+        db.session.delete(post)
+
     db.session.delete(user)
     db.session.commit()
 
@@ -119,7 +122,7 @@ def display_add_post_form(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template("new_post.html", user)
+    return render_template("new_post.html", user=user)
 
 
 @app.post("/users/<int:user_id>/posts/new")
@@ -147,7 +150,7 @@ def display_post(post_id):
 
     post = Post.query.get_or_404(post_id)
 
-    return render_template("view_post.html", post)
+    return render_template("view_post.html", post=post)
 
 
 @app.get("/posts/<int:post_id>/edit")
@@ -156,7 +159,7 @@ def display_edit_post_form(post_id):
 
     post = Post.query.get_or_404(post_id)
 
-    return render_template("edit_post.html", post)
+    return render_template("edit_post.html", post=post)
 
 
 @app.post("/posts/<int:post_id>/edit")

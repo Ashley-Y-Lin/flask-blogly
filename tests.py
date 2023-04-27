@@ -132,3 +132,75 @@ class UserViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             html = resp.get_data(as_text=True)
             self.assertIn(f"<!-- this is the {self.user_id} edit user page -->", html)
+
+    def test_delete_user_no_posts(self):
+        """Test deleting a user who doesn't have any posts.
+        Make sure it redirects to the user list page."""
+        with self.client as c:
+            resp = c.post(
+                f"/users/{self.user_id}/delete",
+                follow_redirects=False,
+            )
+
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(resp.location, "/users")
+
+    def test_delete_user_no_posts_redirection(self):
+        """Test that after deleting a user who doesn't have any posts,
+        the user is successfully removed from the user list."""
+        with self.client as c:
+            resp = c.post(
+                f"/users/{self.user_id}/delete",
+                follow_redirects=True,
+            )
+
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(User.query.all(), [])
+            self.assertIn("was deleted.", html)
+
+    def test_delete_user_with_posts(self):
+        """Test deleting a user who has some posts.
+        Make sure it redirects to the user list page."""
+        with self.client as c:
+            # give user a post
+            c.post(
+                f"/users/{self.user_id}/posts/new",
+                data={
+                    "title": "A new post",
+                    "content": "This is my post content",
+                },
+                follow_redirects=True,
+            )
+
+            resp = c.post(
+                f"/users/{self.user_id}/delete",
+                follow_redirects=False,
+            )
+
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(resp.location, "/users")
+
+    def test_delete_user_with_posts_redirection(self):
+        """Test that after deleting a user who has some posts,
+        the user is successfully removed from the user list."""
+        with self.client as c:
+            # give the user a post
+            c.post(
+                f"/users/{self.user_id}/posts/new",
+                data={
+                    "title": "A new post",
+                    "content": "This is my post content",
+                },
+                follow_redirects=True,
+            )
+
+            resp = c.post(
+                f"/users/{self.user_id}/delete",
+                follow_redirects=True,
+            )
+
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(User.query.all(), [])
+            self.assertIn("was deleted.", html)

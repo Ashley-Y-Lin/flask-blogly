@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %} {{post.title}} {% endblock %}
+
+{% block content %}
+
+<div>{{post.content}}</div>
+
+<div><em>By {{post.author.first_name}} {{post.author.last_name}} </em></div>
+
+<form action="/users/{{post.author_id}}" method="GET">
+  <button class="btn btn-outline-primary">See all posts</button>
+</form>
+
+<form action="/posts/{{post.id}}/edit" method="GET">
+  <button class="btn btn-primary">Edit</button>
+</form>
+
+<form action="/posts/{{post.id}}/delete" method="POST">
+  <button class="btn btn-danger">Delete</button>
+</form>
+
+<!-- this is the view post page for {{post.id}} -->
+
+{% endblock %}

@@ -19,6 +19,17 @@
   <button class="btn btn-danger">Delete</button>
 </form>
 
+<h2>Posts</h2>
+<ul>
+  {% for post in user.posts %}
+    <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
+  {% endfor %}
+</ul>
+
+<form action="/users/{{user.id}}/posts/new" method="GET">
+  <button class="btn btn-primary">Add Post</button>
+</form>
+
 <!-- this is the {{user.id}} user_detail page -->
 
 {% endblock %}
