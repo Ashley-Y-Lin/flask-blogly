@@ -135,12 +135,10 @@ def add_new_post(user_id):
 
     title = request.form["title"]
     content = request.form["content"]
-    tags = request.form.getlist("tags")
+    tag_ids = request.form.getlist("tags")
 
-    post = Post(title=title, content=content, author_id=user.id)
-
-    for tag in tags:
-        post.tags.append(Tag.query.get(tag))
+    tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
+    post = Post(title=title, content=content, author_id=user.id, tags=tags)
 
     db.session.add(post)
     db.session.commit()
@@ -180,11 +178,8 @@ def edit_post(post_id):
     post.title = request.form["title"]
     post.content = request.form["content"]
 
-    post.tags = []
-    tags = request.form.getlist("tags")
-
-    for tag in tags:
-        post.tags.append(Tag.query.get(tag))
+    tag_ids = request.form.getlist("tags")
+    post.tags = [Tag.query.get(id) for id in tag_ids]
 
     db.session.add(post)
     db.session.commit()

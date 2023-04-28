@@ -32,11 +32,10 @@
     {% for tag in tags %}
       {% if tag in post.tags %}
         <input id="tag-{{tag.id}}" name="tags" value="{{tag.id}}" type="checkbox" checked>
-        <label for="tag-{{tag.id}}">{{tag.name}}</label>
       {% else %}
         <input id="tag-{{tag.id}}" name="tags" value="{{tag.id}}" type="checkbox">
-        <label for="tag-{{tag.id}}">{{tag.name}}</label>
       {% endif %}
+        <label for="tag-{{tag.id}}">{{tag.name}}</label>
     {% endfor %}
   </div>
 
