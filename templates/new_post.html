@@ -26,6 +26,13 @@
       required>
   </div>
 
+  <div>
+    {% for tag in tags %}
+      <input id="tag-{{tag.id}}" name="tags" value="{{tag.id}}" type="checkbox">
+      <label for="tag-{{tag.id}}">{{tag.name}}</label>
+    {% endfor %}
+  </div>
+
   <button class="btn btn-success">Add</button>
 </form>
 

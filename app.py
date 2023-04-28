@@ -121,7 +121,9 @@ def display_add_post_form(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template("new_post.html", user=user)
+    tags = Tag.query.all()
+
+    return render_template("new_post.html", user=user, tags=tags)
 
 
 @app.post("/users/<int:user_id>/posts/new")
@@ -133,8 +135,13 @@ def add_new_post(user_id):
 
     title = request.form["title"]
     content = request.form["content"]
+    tags = request.form.getlist("tags")
 
     post = Post(title=title, content=content, author_id=user.id)
+
+    for tag in tags:
+        post.tags.append(Tag.query.get(tag))
+
     db.session.add(post)
     db.session.commit()
 
@@ -158,7 +165,9 @@ def display_edit_post_form(post_id):
 
     post = Post.query.get_or_404(post_id)
 
-    return render_template("edit_post.html", post=post)
+    tags = Tag.query.all()
+
+    return render_template("edit_post.html", post=post, tags=tags)
 
 
 @app.post("/posts/<int:post_id>/edit")
@@ -170,6 +179,12 @@ def edit_post(post_id):
 
     post.title = request.form["title"]
     post.content = request.form["content"]
+
+    post.tags = []
+    tags = request.form.getlist("tags")
+
+    for tag in tags:
+        post.tags.append(Tag.query.get(tag))
 
     db.session.add(post)
     db.session.commit()

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %} Create a tag {% endblock %}
+{% block title %} Edit a tag {% endblock %}
 
 {% block content %}
 
-<form id="add-new-tag" action="/tags/new" method="POST">
+<form id="edit-tag" action="/tags/{{tag.id}}/edit" method="POST">
   <div class="form-group">
     <label for="tag_name">Name</label>
     <input
@@ -12,13 +12,14 @@
       id="tag_name_input"
       class="form-control"
       placeholder="Enter a name for the tag"
+      value="{{tag.name}}"
       type="text"
       required>
   </div>
 
-  <button class="btn btn-success">Add</button>
+  <button class="btn btn-success">Edit</button>
 </form>
 
-<a href="/tags" class="btn btn-outline-info">Cancel</button>
+<a href="/tags/{{tag.id}}" class="btn btn-info">Cancel</button>
 
 {% endblock %}
